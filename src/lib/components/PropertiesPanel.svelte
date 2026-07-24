@@ -3,18 +3,24 @@
   import DimensionPaste from './DimensionPaste.svelte';
   import { COLOR_SWATCHES, FINISHES } from '../presets.js';
   import { app, selected, updateObject, removeObject, duplicateObject } from '../store.svelte.js';
+  import { fileToTextureDataURL } from '../image.js';
+  import { toast } from '../toasts.svelte.js';
 
   const o = $derived(selected());
 
   const set = (patch, hist = true) => updateObject(o.id, patch, { history: hist });
 
-  function onTexture(e) {
+  async function onTexture(e) {
     const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => set({ texture: { url: reader.result, face: o.texture?.face || 'top', fit: o.texture?.fit || 'contain' } });
-    reader.readAsDataURL(file);
     e.target.value = '';
+    if (!file) return;
+    try {
+      // Downscale large images so a texture can't overflow browser storage.
+      const url = await fileToTextureDataURL(file);
+      set({ texture: { url, face: o.texture?.face || 'top', fit: o.texture?.fit || 'contain' } });
+    } catch (err) {
+      toast(err?.message || 'Could not use that image.', { tone: 'error' });
+    }
   }
 </script>
 
@@ -136,7 +142,7 @@
 
   .grp { display: flex; flex-direction: column; gap: 9px; }
   .glabel { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-faint); display: flex; justify-content: space-between; align-items: baseline; }
-  .glabel small { font-size: 10px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text-faint); font-variant-numeric: tabular-nums; }
+  .glabel small { font-size: var(--fs-caption); font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text-faint); font-variant-numeric: tabular-nums; }
   .row { display: flex; gap: 8px; }
 
   .rot { display: flex; flex-direction: column; gap: 10px; }

@@ -153,7 +153,7 @@
   .hint span { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
   kbd {
     font-family: inherit;
-    font-size: 10px;
+    font-size: var(--fs-caption);
     background: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: 4px;

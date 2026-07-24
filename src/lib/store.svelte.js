@@ -336,9 +336,23 @@ function resetHistory() {
   syncHist();
 }
 
-// Browser autosave (localStorage).
+// Reactive persistence status for the toolbar indicator.
+//   'idle'  — nothing saved yet this session
+//   'saved' — last autosave succeeded
+//   'error' — last autosave threw (quota exceeded / private mode)
+export const persistence = $state({ status: 'idle' });
+
+// Browser autosave (localStorage). Returns whether the write succeeded so
+// callers can surface a warning instead of silently losing work.
 export function saveLocal() {
-  try { localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(toJSON())); } catch { /* quota / private mode */ }
+  try {
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(toJSON()));
+    persistence.status = 'saved';
+    return true;
+  } catch {
+    persistence.status = 'error';
+    return false;
+  }
 }
 export function loadLocal() {
   try {

@@ -1,5 +1,6 @@
 <script>
-  import { app, hist, undo, redo } from '../store.svelte.js';
+  import { app, hist, undo, redo, persistence } from '../store.svelte.js';
+  import { toast } from '../toasts.svelte.js';
   import { UNITS } from '../units.js';
   import { engineRef } from '../engine/engineRef.js';
 
@@ -25,6 +26,7 @@
         a.href = url;
         a.download = `desk-plan-${stamp}.png`;
         a.click();
+        toast('PNG exported', { tone: 'success' });
       } finally {
         exporting = false;
       }
@@ -98,6 +100,17 @@
     {/if}
   </button>
 
+  <div class="save" class:err={persistence.status === 'error'}
+       title={persistence.status === 'error' ? 'Autosave failed — storage full' : 'Saved to this browser'}>
+    {#if persistence.status === 'error'}
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L14.4 3.9a2 2 0 00-3.4 0z"/></svg>
+      <span>Not saved</span>
+    {:else if persistence.status === 'saved'}
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>
+      <span>Saved</span>
+    {/if}
+  </div>
+
   <button class="btn" title="Import / export JSON" onclick={onopenjson}>
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H7a2 2 0 00-2 2v4a2 2 0 01-2 2 2 2 0 012 2v4a2 2 0 002 2h1M16 3h1a2 2 0 012 2v4a2 2 0 002 2 2 2 0 00-2 2v4a2 2 0 01-2 2h-1"/></svg>
     JSON
@@ -122,8 +135,8 @@
     z-index: 10;
   }
   .brand { display: flex; align-items: center; gap: 9px; padding-right: 6px; }
-  .logo { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: #fff;
-    background: linear-gradient(135deg, var(--accent), #6aa2ff); box-shadow: var(--shadow-sm); }
+  .logo { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: var(--accent-contrast);
+    background: linear-gradient(135deg, var(--accent), oklch(0.7 0.16 320)); box-shadow: var(--shadow-sm); }
   .name { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
   .name span { color: var(--accent); }
 
@@ -153,6 +166,17 @@
   }
   .export { margin-left: 2px; }
 
+  .save {
+    display: flex; align-items: center; gap: 5px;
+    padding: 0 4px; font-size: var(--fs-caption); font-weight: 600;
+    color: var(--text-faint); user-select: none;
+    transition: color 0.15s;
+  }
+  .save.err { color: var(--danger); }
+
+  @media (max-width: 1120px) {
+    .save span { display: none; }
+  }
   @media (max-width: 980px) {
     .toggle span, .mini { display: none; }
     .name span { display: none; }

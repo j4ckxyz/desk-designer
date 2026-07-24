@@ -5,7 +5,7 @@
   let { value, unit = 'cm', label = '', min = 0.1, step = 0.5, onchange } = $props();
 
   let text = $state('');
-  let focused = false;
+  let focused = $state(false);
 
   // keep the field in sync when the underlying cm value changes externally
   $effect(() => {

@@ -82,7 +82,7 @@
     color: var(--text-dim); background: var(--surface); border: 1px solid var(--border);
   }
   .tabs button:hover { color: var(--text); }
-  .tabs button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tabs button.active { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
 
   .items { display: flex; flex-direction: column; gap: 5px; }
   .item {
@@ -95,7 +95,7 @@
   .dot { width: 16px; height: 16px; border-radius: 5px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.2); }
   .in { flex: 1; display: flex; flex-direction: column; text-align: left; min-width: 0; }
   .iname { font-size: 12.5px; font-weight: 600; }
-  .idim { font-size: 10.5px; color: var(--text-faint); }
+  .idim { font-size: var(--fs-caption); color: var(--text-faint); font-variant-numeric: tabular-nums; }
   .plus { color: var(--text-faint); flex-shrink: 0; }
   .item:hover .plus { color: var(--accent); }
 

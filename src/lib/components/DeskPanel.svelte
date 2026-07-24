@@ -80,7 +80,7 @@
   .preset:hover { border-color: var(--border-strong); }
   .preset.active { border-color: var(--accent); background: var(--accent-soft); }
   .pn { font-size: 11.5px; font-weight: 600; }
-  .pd { font-size: 10px; color: var(--text-faint); }
+  .pd { font-size: var(--fs-caption); color: var(--text-faint); font-variant-numeric: tabular-nums; }
 
   .swatches { display: flex; flex-wrap: wrap; gap: 7px; }
   .swatch {

@@ -1,5 +1,6 @@
 <script>
   import { toJSONString, fromJSON, commit, clearLocal, clearAll } from '../store.svelte.js';
+  import { toast } from '../toasts.svelte.js';
   import skillPrompt from '../../../SKILL.md?raw';
 
   let { onclose } = $props();
@@ -8,6 +9,7 @@
   let importText = $state('');
   let error = $state('');
   let copied = $state('');
+  let confirmClear = $state(false);
 
   const exportText = $derived(toJSONString());
 
@@ -27,6 +29,7 @@
     a.download = `desk-plan-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    toast('Downloaded .json', { tone: 'success' });
   }
 
   function load() {
@@ -35,9 +38,18 @@
       fromJSON(importText);
       commit();
       onclose?.();
+      toast('Design loaded', { tone: 'success' });
     } catch (e) {
       error = e?.message || 'Could not parse that JSON.';
     }
+  }
+
+  function clearScene() {
+    clearAll();
+    clearLocal();
+    confirmClear = false;
+    onclose?.();
+    toast('Scene cleared');
   }
 
   function onFile(e) {
@@ -98,7 +110,12 @@
           Load file…
         </label>
         <span class="spacer"></span>
-        <button class="btn danger" onclick={() => { clearAll(); clearLocal(); }}>Clear scene</button>
+        {#if confirmClear}
+          <button class="btn" onclick={() => (confirmClear = false)}>Cancel</button>
+          <button class="btn danger" onclick={clearScene}>Confirm clear</button>
+        {:else}
+          <button class="btn danger" onclick={() => (confirmClear = true)}>Clear scene</button>
+        {/if}
         <button class="btn primary" onclick={load} disabled={!importText.trim()}>Load design</button>
       </div>
     {/if}

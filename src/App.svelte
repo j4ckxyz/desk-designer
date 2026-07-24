@@ -6,7 +6,9 @@
   import ObjectList from './lib/components/ObjectList.svelte';
   import PropertiesPanel from './lib/components/PropertiesPanel.svelte';
   import JsonDialog from './lib/components/JsonDialog.svelte';
-  import { app, saveLocal } from './lib/store.svelte.js';
+  import Toasts from './lib/components/Toasts.svelte';
+  import { app, saveLocal, persistence } from './lib/store.svelte.js';
+  import { toast } from './lib/toasts.svelte.js';
 
   let theme = $state(localStorage.getItem('dd-theme') || 'light');
   let jsonOpen = $state(false);
@@ -23,6 +25,17 @@
     $state.snapshot(app);
     clearTimeout(saveTimer);
     saveTimer = setTimeout(saveLocal, 400);
+  });
+
+  // If a save ever fails (usually a full localStorage quota), say so once —
+  // silent failure would let the user lose work on the next reload.
+  let warnedSaveFail = false;
+  $effect(() => {
+    if (persistence.status === 'error' && !warnedSaveFail) {
+      warnedSaveFail = true;
+      toast('Could not autosave — browser storage is full. Export your design to keep it.', { tone: 'error', ttl: 8000 });
+    }
+    if (persistence.status === 'saved') warnedSaveFail = false;
   });
 
   function toggleTheme() {
@@ -56,6 +69,8 @@
 {#if jsonOpen}
   <JsonDialog onclose={() => (jsonOpen = false)} />
 {/if}
+
+<Toasts />
 
 <style>
   .app { display: flex; flex-direction: column; height: 100vh; }

@@ -1,43 +1,88 @@
-# Svelte + Vite
+# Desk Designer
 
-This template should help get you started developing with Svelte in Vite.
+Plan and design your desk setup to scale, in 3D, right in your browser. Lay out
+your desk, drop on monitors, keyboards, speakers, plants and more from a library
+of real-world–sized items, and see exactly how it all fits before you buy or
+rearrange anything.
 
-## Recommended IDE Setup
+**▶ Use it now: [planner.j4ck.xyz](https://planner.j4ck.xyz)**
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+Like [Excalidraw](https://excalidraw.com), Desk Designer is free to use on the
+hosted site and fully open source — you can [self-host](#self-hosting) your own
+copy in minutes.
 
-## Need an official Svelte framework?
+---
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+## Features
 
-## Technical considerations
+- **True-to-scale 3D scene** — everything is modelled in real centimetres and
+  rendered with [Three.js](https://threejs.org). Orbit, pan and zoom around your
+  build.
+- **Item library** — add monitors, laptops, keyboards, mice, speakers, mics,
+  lamps, plants, mugs and more, each with sensible real-world dimensions.
+- **Full property control** — size, position, rotation, colour, finish
+  (matte / satin / gloss / metal / wood / glass) and stacking height for every
+  object, plus desk width/depth/thickness/height, colour and leg style.
+- **Work in your units** — switch the whole UI between **cm**, **mm** and
+  **inches** at any time.
+- **Paste dimensions** — grab a product's "60 × 40 × 12 cm" spec and paste it
+  straight in to create a correctly sized object.
+- **Undo / redo**, grid & snapping, light / dark theme, and multiple background
+  modes (studio / light / dark).
+- **Autosave** — your design is saved to your browser's `localStorage`
+  automatically. Nothing leaves your machine.
+- **Import / export JSON** — a design is a single portable JSON document. Share
+  it, version it, or hand-edit it.
+- **AI-assisted layouts** — describe your desk in plain language to an AI
+  assistant and import the result. See [AI workflow](#ai-workflow) below.
 
-**Why use this over SvelteKit?**
+## AI workflow
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+A whole desk can be generated from a sentence. Copy [`SKILL.md`](./SKILL.md)
+into Claude, ChatGPT or any capable assistant, then describe your setup
+(*"A 160×80 walnut desk, ultrawide monitor centred at the back, TKL keyboard and
+gaming mouse in front, a mug on the left…"*). The assistant replies with a single
+JSON document — paste it into the app via **Toolbar → JSON → Import → Load
+design** to see it in 3D.
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+The full document format is documented in [`docs/JSON_SPEC.md`](./docs/JSON_SPEC.md).
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+## Tech stack
 
-**Why include `.vscode/extensions.json`?**
+- [Svelte 5](https://svelte.dev) (runes)
+- [Vite](https://vite.dev)
+- [Three.js](https://threejs.org)
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+No backend, no accounts, no tracking — it's a static single-page app.
 
-**Why enable `checkJs` in the JS template?**
+## Self-hosting
 
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
+Requires [Node.js](https://nodejs.org) 18+.
 
-**Why is HMR not preserving my local component state?**
+```bash
+git clone https://github.com/j4ckxyz/desk-designer.git
+cd desk-designer
+npm install
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
+# Run locally with hot reload
+npm run dev
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+# Or build a static bundle for production
+npm run build      # outputs to dist/
+npm run preview    # preview the production build
 ```
+
+The `dist/` folder is a plain static site — host it anywhere (Cloudflare Pages,
+Netlify, GitHub Pages, an S3 bucket, your own server). The hosted instance at
+[planner.j4ck.xyz](https://planner.j4ck.xyz) is deployed from this repo via
+Cloudflare Pages:
+
+| Setting | Value |
+|---|---|
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+
+## Contributing
+
+Issues and pull requests are welcome. To hack on it, follow the self-hosting
+steps above and run `npm run dev`.
